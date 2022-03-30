@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="cream">#FAF1E6</color>
+    <color name="bg_white">#FDFAF6</color>
+    <color name="light_grey">#E4EFE7</color>
+    <color name="green">#206432</color>
+    <color name="light_green">#27693A</color>
+
+    <color name="background">#121212</color>
+    <color name="surface">#202020</color>
+    <color name="fake_mail_color">#FFFEFE</color>
+    <color name="text_color">#FFFFFFFF</color>
+
+</resources>
