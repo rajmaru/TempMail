@@ -10,8 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TempMail">
         <activity
+            android:name=".OpenMail"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"/>
+        <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.CustomSplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
