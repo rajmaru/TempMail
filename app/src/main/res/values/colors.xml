@@ -3,14 +3,17 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="cream">#FAF1E6</color>
-    <color name="bg_white">#FDFAF6</color>
-    <color name="light_grey">#E4EFE7</color>
-    <color name="green">#256436</color>
-    <color name="light_green">#317645</color>
+    <color name="green">#008069</color>
 
     <color name="background">#F4F4F4</color>
-    <color name="surface">#FFFFFFFF</color>
-    <color name="fake_mail_color">#615C5C</color>
-    <color name="text_color">#FF000000</color>
+    <color name="surface">#FFFFFF</color>
+
+    <color name="text_title">#1E1E1E</color>
+    <color name="text_subtitle">#6B6B6B</color>
+
+    <color name="statusBar">#008069</color>
+
+    <color name="toolbar_color">#008069</color>
+    <color name="onToolbar">#FFFFFF</color>
+
 </resources>
