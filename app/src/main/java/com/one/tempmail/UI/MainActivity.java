@@ -26,9 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     ActivityMainBinding binding;
-    InboxAdapter adapter;
+//    InboxAdapter adapter;
     ApiViewModel apiViewModel;
-    String randomEmail, login, domain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,22 +35,19 @@ public class MainActivity extends AppCompatActivity {
         SplashScreen.installSplashScreen(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        login = "moinu";
-        domain = "xojxe.com";
-
         apiViewModel = new ViewModelProvider(this).get(ApiViewModel.class);
 
-        apiViewModel.getRandomEmail(Constants.ACTION_GET_RANDOM_EMAIL, 1)
-                .observe(this, new Observer<List<String>>() {
+        apiViewModel.getRandomEmail()
+                .observe(this, new Observer<ArrayList<String>>() {
                     @Override
-                    public void onChanged(List<String> strings) {
+                    public void onChanged(ArrayList<String> strings) {
                         setRandomEmail(strings);
                     }
                 });
 
     }
 
-    private void setRandomEmail(List<String> strings) {
+    private void setRandomEmail(ArrayList<String> strings) {
         if(!strings.isEmpty()){
             binding.randomEmailTV.setText(strings.get(0));
         }else {

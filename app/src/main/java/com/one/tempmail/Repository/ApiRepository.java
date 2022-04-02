@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.one.tempmail.Api.ApiRequest;
 import com.one.tempmail.Api.RetrofitRequest;
+import com.one.tempmail.Constants.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -21,22 +23,22 @@ public class ApiRepository {
         apiRequest = new RetrofitRequest().getApiRequest();
     }
 
-    public LiveData<List<String>> getRandomEmail(String action, Integer count) {
-        final MutableLiveData<List<String>> data = new MutableLiveData<>();
-        apiRequest.getRandomEmail(action, count)
-                .enqueue(new Callback<List<String>>() {
-                    @Override
-                    public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                        if(response.body() != null){
-                            data.setValue(response.body());
-                        }
-                    }
+    public LiveData<ArrayList<String>> getRandomEmail() {
+        final MutableLiveData<ArrayList<String>> data = new MutableLiveData<>();
+        apiRequest.getRandomEmail(Constants.ACTION_GET_RANDOM_EMAIL)
+                .enqueue(new Callback<ArrayList<String>>() {
+            @Override
+            public void onResponse(Call<ArrayList<String>> call, Response<ArrayList<String>> response) {
+                if (response.body() != null) {
+                    data.setValue(response.body());
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<List<String>> call, Throwable t) {
-                            data.setValue(null);
-                    }
-                });
+            @Override
+            public void onFailure(Call<ArrayList<String>> call, Throwable t) {
+                data.setValue(null);
+            }
+        });
         return data;
     }
 
