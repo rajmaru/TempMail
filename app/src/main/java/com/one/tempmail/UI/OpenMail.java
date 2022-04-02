@@ -43,6 +43,12 @@ public class OpenMail extends AppCompatActivity {
     }
 
     private void setAttachmentsAdapter() {
+        fakeData = new ArrayList<>();
+        fakeData.add(new AttachmentsData("asdfaf","application\\/pdf", 100));
+        fakeData.add(new AttachmentsData("asdfaf","application\\/pdf", 100));
+        fakeData.add(new AttachmentsData("asdfaf","application\\/pdf", 100));
+        fakeData.add(new AttachmentsData("asdfaf","application\\/pdf", 100));
+        fakeData.add(new AttachmentsData("asdfaf","application\\/pdf", 100));
         if (!fakeData.isEmpty()) {
             binding.attachmentsRv.setVisibility(View.VISIBLE);
             adapter = new AttachmentsAdapter(this, fakeData);

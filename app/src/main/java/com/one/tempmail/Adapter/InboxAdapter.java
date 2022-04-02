@@ -14,14 +14,14 @@ import com.one.tempmail.R;
 import com.one.tempmail.UI.MainActivity;
 import com.one.tempmail.UI.OpenMail;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.InboxViewHolder>{
 
-    ArrayList<InboxData> inboxDataList;
+    List<InboxData> inboxDataList;
     MainActivity activity;
 
-    public InboxAdapter(MainActivity activity, ArrayList<InboxData> inboxDataList) {
+    public InboxAdapter(MainActivity activity, List<InboxData> inboxDataList) {
         this.inboxDataList = inboxDataList;
         this.activity = activity;
     }
