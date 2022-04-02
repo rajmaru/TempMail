@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.one.tempmail">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,11 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TempMail">
         <activity
-            android:name=".OpenMail"
+            android:name=".UI.OpenMail"
             android:exported="false"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".UI.MainActivity"/>
         <activity
-            android:name=".MainActivity"
+            android:name=".UI.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.CustomSplashScreenTheme">
             <intent-filter>
@@ -24,9 +26,6 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
