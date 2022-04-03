@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.one.tempmail.Models.AttachmentsData;
 import com.one.tempmail.R;
 import com.one.tempmail.UI.OpenMail;
+import com.one.tempmail.ViewModel.ApiViewModel;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 
     ArrayList<AttachmentsData> attachmentsDataList;
     OpenMail activity;
+
 
     public AttachmentsAdapter(OpenMail activity, ArrayList<AttachmentsData> attachmentsDataList) {
         this.attachmentsDataList = attachmentsDataList;
@@ -43,6 +45,7 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
         holder.download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                activity.downloadAttachements();
                 Toast.makeText(activity,"Download successfully!!!",Toast.LENGTH_LONG).show();
             }
         });

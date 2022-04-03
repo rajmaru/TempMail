@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,7 +14,12 @@ import androidx.core.splashscreen.SplashScreen;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.one.tempmail.Adapter.InboxAdapter;
+import com.one.tempmail.Models.InboxData;
 import com.one.tempmail.R;
 import com.one.tempmail.ViewModel.ApiViewModel;
 import com.one.tempmail.databinding.ActivityMainBinding;
@@ -24,11 +30,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     ActivityMainBinding binding;
-    //  InboxAdapter adapter;
+    InboxAdapter adapter;
     ApiViewModel apiViewModel;
     SharedPreferences savedEmailPreferences;
+    ArrayList<InboxData> inboxDataList;
     SharedPreferences.Editor editor;
-    ArrayList<String> randomEmailList;
+    String email;
     public static final String LOADING = "Loading...";
 
     @Override
@@ -39,44 +46,106 @@ public class MainActivity extends AppCompatActivity {
 
         initialize();
         getSavedUserData();
-        getRandomEmail();
         randomEmailButton();
         copyButton();
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getInboxData(email);
+            }
+        }, 3000);
+
+        binding.refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getInboxData(email);
+            }
+        });
+
     }
+
 
     private void initialize() {
         apiViewModel = new ViewModelProvider(this).get(ApiViewModel.class);
-        savedEmailPreferences = getSharedPreferences("randomEmailPreferences", MODE_PRIVATE);
+        savedEmailPreferences = getSharedPreferences("savedEmailPreferences", MODE_PRIVATE);
         editor = savedEmailPreferences.edit();
-        randomEmailList = new ArrayList<>();
+        inboxDataList = new ArrayList<>();
     }
 
-    private void getSavedUserData() {
-        String savedEmail = savedEmailPreferences.getString("savedEmail", LOADING);
-        if (savedEmail != null) {
-            binding.randomEmailTV.setText(savedEmail);
-        } else {
-            getRandomEmail();
-        }
-    }
-
-    private void saveUserData(String email) {
-        editor.putString("savedEmail", email);
-        editor.commit();
-    }
-
+    // Email
     private void getRandomEmail() {
         apiViewModel.getRandomEmail()
                 .observe(this, new Observer<ArrayList<String>>() {
                     @Override
                     public void onChanged(ArrayList<String> strings) {
-                        setRandomEmail(strings);
-                        saveUserData(strings.get(0));
+                        email = strings.get(0);
+                        setEmailTV(email);
+                        saveEmail(email);
+                        getInboxData(email);
                     }
                 });
     }
 
+    private void setEmailTV(String email) {
+        if (email != null) {
+            binding.randomEmailTV.setText(email);
+        } else {
+            binding.randomEmailTV.setText(LOADING);
+        }
+    }
+
+    // Inbox
+    private void getInboxData(String email) {
+        String username, domain;
+        String[] stringList = email.split("@");
+        username = stringList[0];
+        domain = stringList[1];
+        apiViewModel.getInboxData(username, domain).observe(this, new Observer<ArrayList<InboxData>>() {
+            @Override
+            public void onChanged(ArrayList<InboxData> inboxData) {
+                inboxDataList = inboxData;
+                setInboxAdapter();
+            }
+        });
+
+    }
+
+    private void setInboxAdapter() {
+        if (!inboxDataList.isEmpty()) {
+            binding.inboxRv.setVisibility(View.VISIBLE);
+            binding.noDataImage.setVisibility(View.GONE);
+            binding.noDataText.setVisibility(View.GONE);
+            adapter = new InboxAdapter(MainActivity.this, inboxDataList);
+            binding.inboxRv.setAdapter(adapter);
+            binding.inboxRv.setHasFixedSize(true);
+            binding.inboxRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+            binding.refreshLayout.setRefreshing(false);
+        } else {
+            binding.inboxRv.setVisibility(View.GONE);
+            binding.noDataImage.setVisibility(View.VISIBLE);
+            binding.noDataText.setVisibility(View.VISIBLE);
+            binding.refreshLayout.setRefreshing(false);
+        }
+    }
+
+    // Saved Data
+    private void getSavedUserData() {
+        email = savedEmailPreferences.getString("savedEmail", LOADING);
+        if (!email.equals(LOADING)) {
+            binding.randomEmailTV.setText(email);
+            getInboxData(email);
+        } else {
+            getRandomEmail();
+        }
+    }
+
+    private void saveEmail(String email) {
+        editor.putString("savedEmail", email);
+        editor.commit();
+    }
+
+    // Buttons
     private void randomEmailButton() {
         binding.randomEmailBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,30 +170,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void setRandomEmail(ArrayList<String> email) {
-        if (!email.isEmpty()) {
-            binding.randomEmailTV.setText(email.get(0));
-        } else {
-            binding.randomEmailTV.setText(LOADING);
-        }
-    }
-
-
-//    private void setInboxAdapter(List<InboxData> inboxDataList) {
-//       if (!inboxDataList.isEmpty()) {
-//            binding.inboxRv.setVisibility(View.VISIBLE);
-//            binding.noDataImage.setVisibility(View.GONE);
-//            binding.noDataText.setVisibility(View.GONE);
-//            adapter = new InboxAdapter(MainActivity.this, inboxDataList);
-//            binding.inboxRv.setAdapter(adapter);
-//            binding.inboxRv.setHasFixedSize(true);
-//            binding.inboxRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-//        } else {
-//            binding.inboxRv.setVisibility(View.GONE);
-//            binding.noDataImage.setVisibility(View.VISIBLE);
-//            binding.noDataText.setVisibility(View.VISIBLE);
-//        }
-//    }
 
 }
