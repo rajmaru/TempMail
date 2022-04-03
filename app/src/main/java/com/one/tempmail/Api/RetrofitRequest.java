@@ -10,7 +10,7 @@ public class RetrofitRequest {
     ApiRequest apiRequest;
 
     public ApiRequest getApiRequest() {
-        if (apiRequest != null) {
+        if (apiRequest == null) {
             apiRequest = new retrofit2.Retrofit.Builder()
                     .baseUrl(Constants.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())

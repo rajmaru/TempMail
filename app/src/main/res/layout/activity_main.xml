@@ -78,7 +78,7 @@
                     android:paddingStart="10dp"
                     android:paddingEnd="5dp"
                     android:singleLine="true"
-                    android:text="iuasrfadsfgsdgfaghergoiag@gmail.com"
+                    android:text="..."
                     android:textColor="@color/text_title"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
