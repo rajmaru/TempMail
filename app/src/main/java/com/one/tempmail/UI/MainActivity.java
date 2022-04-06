@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.one.tempmail.Adapter.InboxAdapter;
 import com.one.tempmail.Models.InboxData;
 import com.one.tempmail.R;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences savedEmailPreferences;
     ArrayList<InboxData> inboxDataList;
     SharedPreferences.Editor editor;
+    ShimmerFrameLayout shimmer;
     String email;
     public static final String LOADING = "Loading...";
 
@@ -48,13 +51,6 @@ public class MainActivity extends AppCompatActivity {
         getSavedUserData();
         randomEmailButton();
         copyButton();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                getInboxData(email);
-            }
-        }, 3000);
 
         binding.refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -71,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         savedEmailPreferences = getSharedPreferences("savedEmailPreferences", MODE_PRIVATE);
         editor = savedEmailPreferences.edit();
         inboxDataList = new ArrayList<>();
+        shimmer = findViewById(R.id.inboxShimmer);
+        shimmer.startShimmer();
     }
 
     // Email
@@ -113,15 +111,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void setInboxAdapter() {
         if (!inboxDataList.isEmpty()) {
+            // Stop Shimmer Effect
+            shimmer.stopShimmer();
+            shimmer.setVisibility(View.GONE);
+
+            //Set Visibility
             binding.inboxRv.setVisibility(View.VISIBLE);
             binding.noDataImage.setVisibility(View.GONE);
             binding.noDataText.setVisibility(View.GONE);
+
+            //Set Data
             adapter = new InboxAdapter(MainActivity.this, inboxDataList);
             binding.inboxRv.setAdapter(adapter);
             binding.inboxRv.setHasFixedSize(true);
             binding.inboxRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
             binding.refreshLayout.setRefreshing(false);
         } else {
+            shimmer.stopShimmer();
+            shimmer.setVisibility(View.GONE);
             binding.inboxRv.setVisibility(View.GONE);
             binding.noDataImage.setVisibility(View.VISIBLE);
             binding.noDataText.setVisibility(View.VISIBLE);

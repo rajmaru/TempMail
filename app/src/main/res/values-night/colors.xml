@@ -15,4 +15,6 @@
 
     <color name="toolbar_color">#1F2C34</color>
     <color name="onToolbar">#F4F4F4</color>
+
+    <color name="shimmercolor">#85969E</color>
 </resources>

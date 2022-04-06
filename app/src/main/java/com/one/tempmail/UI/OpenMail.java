@@ -1,7 +1,6 @@
 package com.one.tempmail.UI;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingComponent;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -12,10 +11,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.one.tempmail.Adapter.AttachmentsAdapter;
 import com.one.tempmail.Models.AttachmentsData;
 import com.one.tempmail.Models.MessageData;
@@ -31,6 +28,7 @@ public class OpenMail extends AppCompatActivity {
     AttachmentsAdapter adapter;
     SharedPreferences savedEmailPreferences;
     ApiViewModel apiViewModel;
+    ShimmerFrameLayout shimmer;
     int id;
     String email, username, domain, filename;
 
@@ -52,6 +50,16 @@ public class OpenMail extends AppCompatActivity {
         apiViewModel.getMessageData(username, domain, id).observe(this, new Observer<MessageData>() {
             @Override
             public void onChanged(MessageData messageData) {
+                // Stop Shimmer Effect
+                shimmer.stopShimmer();
+                shimmer.setVisibility(View.GONE);
+
+                // Set Visibility Layout
+                binding.fromLayout.setVisibility(View.VISIBLE);
+                binding.subjectLayout.setVisibility(View.VISIBLE);
+                binding.mailBodyLayout.setVisibility(View.VISIBLE);
+
+                // Set Values
                 binding.senderEmailOM.setText(messageData.getFrom());
                 binding.subjectTV.setText(messageData.getSubject());
                 binding.mailBodyOM.setText(messageData.getTextBody());
@@ -63,6 +71,8 @@ public class OpenMail extends AppCompatActivity {
     private void initialize() {
         apiViewModel = new ViewModelProvider(this).get(ApiViewModel.class);
         savedEmailPreferences = getSharedPreferences("savedEmailPreferences", MODE_PRIVATE);
+        shimmer = (ShimmerFrameLayout) findViewById(R.id.openMailShimmer);
+        shimmer.startShimmer();
     }
 
     private void getSavedData() {

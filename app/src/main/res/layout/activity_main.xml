@@ -177,14 +177,47 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/inboxHeaderLayout">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/inbox_rv"
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/inboxHeaderLayout" />
+                        android:layout_height="match_parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/inbox_rv"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.facebook.shimmer.ShimmerFrameLayout
+                            android:id="@+id/inboxShimmer"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <include layout="@layout/inbox_shimmer" />
+
+                                <include layout="@layout/inbox_shimmer" />
+
+                                <include layout="@layout/inbox_shimmer" />
+
+                                <include layout="@layout/inbox_shimmer" />
+
+                                <include layout="@layout/inbox_shimmer" />
+
+                            </LinearLayout>
+
+                        </com.facebook.shimmer.ShimmerFrameLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -203,6 +236,7 @@
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:alpha="0.3"
+                        android:visibility="gone"
                         app:srcCompat="@drawable/ic_no_data"
                         app:tint="@color/text_subtitle" />
 
@@ -215,7 +249,8 @@
                         android:fontFamily="@font/gilroy_bold"
                         android:text="Your inbox is empty"
                         android:textColor="@color/text_subtitle"
-                        android:textSize="20sp" />
+                        android:textSize="20sp"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
