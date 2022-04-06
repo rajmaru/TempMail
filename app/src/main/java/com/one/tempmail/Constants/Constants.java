@@ -5,5 +5,6 @@ public class Constants {
     public static final String ACTION_GET_RANDOM_EMAIL = "genRandomMailbox";
     public static final String ACTION_GET_MESSAGES = "getMessages";
     public static final String ACTION_READ_MESSAGE = "readMessage";
-    public static final String ACTION_DOWNLOAD = "download";
+
+    public static final String PDF = ".pdf";
 }

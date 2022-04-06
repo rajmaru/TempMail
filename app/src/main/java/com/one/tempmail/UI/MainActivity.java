@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
     private void setEmailTV(String email) {
         if (email != null) {
             binding.randomEmailTV.setText(email);
@@ -108,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
     private void setInboxAdapter() {
         if (!inboxDataList.isEmpty()) {
             // Stop Shimmer Effect
@@ -119,6 +117,9 @@ public class MainActivity extends AppCompatActivity {
             binding.inboxRv.setVisibility(View.VISIBLE);
             binding.noDataImage.setVisibility(View.GONE);
             binding.noDataText.setVisibility(View.GONE);
+
+            //Change Date Format
+            changeDateFormat(inboxDataList);
 
             //Set Data
             adapter = new InboxAdapter(MainActivity.this, inboxDataList);
@@ -136,6 +137,83 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Change Date Format
+    private void changeDateFormat(ArrayList<InboxData> inboxDataList) {
+        for(int i=0; i<inboxDataList.size(); i++){
+            // Date and Time
+            String[] dateAndTime, dateData, timeData, date, time;
+            String year, day, month, hours, minutes, seconds;
+
+            // Split Date and Time
+            dateAndTime = inboxDataList.get(i).getDate().split(" ");
+
+            // Split Date
+            dateData = dateAndTime[0].split("-");
+
+            // Split Time
+            timeData = dateAndTime[1].split(":");
+
+            // Set Date Values
+            year = dateData[0];
+            month = dateData[1];
+            day = dateData[2];
+
+            //Remove '0' from index[0]
+            if(month.indexOf('0')==0){
+                month = month.substring(1,month.length());
+            }
+            if(day.indexOf('0')==0){
+                day = day.substring(1,day.length());
+            }
+
+            // Set Time Values
+            hours = timeData[0];
+            minutes = timeData[1];
+            seconds = timeData[2];
+
+            switch (month) {
+                case "1":
+                    month = "Jan";
+                    break;
+                case "2":
+                    month = "Feb";
+                    break;
+                case "3":
+                    month = "Mar";
+                    break;
+                case "4":
+                    month = "Apr";
+                    break;
+                case "5":
+                    month = "May";
+                    break;
+                case "6":
+                    month = "Jun";
+                    break;
+                case "7":
+                    month = "Jul";
+                    break;
+                case "8":
+                    month = "Aug";
+                    break;
+                case "9":
+                    month = "Sept";
+                    break;
+                case "10":
+                    month = "Oct";
+                    break;
+                case "11":
+                    month = "Nov";
+                    break;
+                case "12":
+                    month = "Dec";
+                    break;
+            }
+            String finalTime = day + " " + month + ", " + year + " " + hours + ":" + minutes + ":" + seconds;
+            inboxDataList.get(i).setDate(finalTime);
+        }
+    }
+
     // Saved Data
     private void getSavedUserData() {
         email = savedEmailPreferences.getString("savedEmail", LOADING);
@@ -146,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
             getRandomEmail();
         }
     }
-
     private void saveEmail(String email) {
         editor.putString("savedEmail", email);
         editor.commit();
@@ -161,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     private void copyButton() {
         binding.randomEmailCopyBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,5 +1,6 @@
 package com.one.tempmail.Adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.one.tempmail.Constants.Constants;
 import com.one.tempmail.Models.AttachmentsData;
 import com.one.tempmail.R;
 import com.one.tempmail.UI.OpenMail;
@@ -41,7 +43,14 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
         holder.title.setText(attachmentsData.getFilename());
         String size = attachmentsData.getSize() + " mb";
         holder.size.setText(size);
-        holder.icon.setImageResource(R.drawable.ic_document);
+        Log.d("TAG", "getContentType: "+attachmentsData.getContentType());
+        if(attachmentsData.getContentType().equals("application/pdf")){
+            holder.icon.setImageResource(R.drawable.ic_pdf);
+            holder.extension.setText(Constants.PDF);
+        }else{
+            holder.icon.setImageResource(R.drawable.ic_document);
+        }
+
         holder.download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,12 +68,13 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 
     public static class AttachmentsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView title, size;
+        TextView title, size, extension;
         ImageView icon, download;
 
         public AttachmentsViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.titleAttachments);
+            extension = itemView.findViewById(R.id.extensionAttachments);
             size = itemView.findViewById(R.id.sizeAttachments);
             icon = itemView.findViewById(R.id.iconAttachments);
             download = itemView.findViewById(R.id.downloadAttachments);
