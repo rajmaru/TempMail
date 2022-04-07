@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -142,7 +143,8 @@ public class MainActivity extends AppCompatActivity {
         for(int i=0; i<inboxDataList.size(); i++){
             // Date and Time
             String[] dateAndTime, dateData, timeData, date, time;
-            String year, day, month, hours, minutes, seconds;
+            String year, day, month, hours, minutes, seconds, AMPM;
+            int intHours, intMinutes;
 
             // Split Date and Time
             dateAndTime = inboxDataList.get(i).getDate().split(" ");
@@ -168,9 +170,21 @@ public class MainActivity extends AppCompatActivity {
 
             // Set Time Values
             hours = timeData[0];
+            intHours = Integer.parseInt(hours) + 4;
             minutes = timeData[1];
+            intMinutes = Integer.parseInt(minutes) - 30;
             seconds = timeData[2];
 
+            //Set 12 hours period
+            if(intHours <= 12){
+                AMPM = "am";
+            }else{
+                intHours = intHours - 12;
+                hours = intHours+"";
+                AMPM = "pm";
+            }
+
+            // Convert months from number to name
             switch (month) {
                 case "1":
                     month = "Jan";
@@ -209,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
                     month = "Dec";
                     break;
             }
-            String finalTime = day + " " + month + ", " + year + " " + hours + ":" + minutes + ":" + seconds;
+            String finalTime = day + " " + month + ", " + year + " | " + hours + ":" + minutes + " " + AMPM;
             inboxDataList.get(i).setDate(finalTime);
         }
     }

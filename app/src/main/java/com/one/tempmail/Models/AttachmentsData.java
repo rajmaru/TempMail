@@ -14,9 +14,9 @@ public class AttachmentsData {
 
     @SerializedName("size")
     @Expose
-    private float size;
+    private int size;
 
-    public AttachmentsData(String filename, String contentType, float size) {
+    public AttachmentsData(String filename, String contentType, int size) {
         this.filename = filename;
         this.contentType = contentType;
         this.size = size;
@@ -38,11 +38,11 @@ public class AttachmentsData {
         this.contentType = contentType;
     }
 
-    public float getSize() {
+    public int getSize() {
         return size;
     }
 
-    public void setSize(float size) {
+    public void setSize(int size) {
         this.size = size;
     }
 }

@@ -40,16 +40,43 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
     @Override
     public void onBindViewHolder(@NonNull AttachmentsViewHolder holder, int position) {
         AttachmentsData attachmentsData = attachmentsDataList.get(position);
-        holder.title.setText(attachmentsData.getFilename());
-        String size = attachmentsData.getSize() + " mb";
-        holder.size.setText(size);
-        Log.d("TAG", "getContentType: "+attachmentsData.getContentType());
-        if(attachmentsData.getContentType().equals("application/pdf")){
+        int attachSize = attachmentsData.getSize();
+        String StringAttachSize = attachSize+"";
+        if(StringAttachSize.length() >= 4 && StringAttachSize.length() <= 6){
+            attachSize = attachSize / 1024;
+            StringAttachSize = attachSize + " kb";
+        }else if(StringAttachSize.length() >= 7 && StringAttachSize.length() <= 9){
+            attachSize = attachSize / 1048576;
+            StringAttachSize = attachSize + " mb";
+        } else if(StringAttachSize.length() >= 10 && StringAttachSize.length() <= 12){
+            attachSize = attachSize / 1073741824;
+            StringAttachSize = attachSize + " gb";
+        }else{
+            StringAttachSize = attachSize + " b";
+        }
+        holder.size.setText(StringAttachSize);
+        if(attachmentsData.getContentType().contains("pdf")){
             holder.icon.setImageResource(R.drawable.ic_pdf);
-            holder.extension.setText(Constants.PDF);
+            String attachName = attachmentsData.getFilename();
+            attachName = attachName.replace(".PDF", ".pdf");
+            holder.title.setText(attachName);
+        }else if(attachmentsData.getContentType().contains("image")){
+            holder.icon.setImageResource(R.drawable.ic_image);
+            holder.title.setText(attachmentsData.getFilename());
+        }else if(attachmentsData.getContentType().contains("audio")){
+            holder.icon.setImageResource(R.drawable.ic_audio);
+            holder.title.setText(attachmentsData.getFilename());
+        }else if(attachmentsData.getContentType().contains("video")){
+            holder.icon.setImageResource(R.drawable.ic_video);
+            holder.title.setText(attachmentsData.getFilename());
+        }else if(attachmentsData.getContentType().contains("text")){
+            holder.icon.setImageResource(R.drawable.ic_text);
+            holder.title.setText(attachmentsData.getFilename());
         }else{
             holder.icon.setImageResource(R.drawable.ic_document);
+            holder.title.setText(attachmentsData.getFilename());
         }
+
 
         holder.download.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,13 +95,12 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 
     public static class AttachmentsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView title, size, extension;
+        TextView title, size;
         ImageView icon, download;
 
         public AttachmentsViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.titleAttachments);
-            extension = itemView.findViewById(R.id.extensionAttachments);
             size = itemView.findViewById(R.id.sizeAttachments);
             icon = itemView.findViewById(R.id.iconAttachments);
             download = itemView.findViewById(R.id.downloadAttachments);
