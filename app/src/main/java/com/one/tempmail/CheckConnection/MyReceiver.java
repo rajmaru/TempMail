@@ -14,7 +14,7 @@ import com.one.tempmail.R;
 public class MyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-       //Diallog Box
+       //Dialog Box
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.no_internet_connection_dialog);
         dialog.setCancelable(false);
