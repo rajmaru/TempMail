@@ -14,23 +14,23 @@ import com.one.tempmail.R;
 public class MyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-       //Dialog Box
+        //Dialog Box
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.no_internet_connection_dialog);
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         MaterialButton retry = dialog.findViewById(R.id.retryBtn);
 
-        if(CheckNetworkConnection.check(context)){
-            Log.d("status: ", CheckNetworkConnection.check(context)+"");
+        if (CheckNetworkConnection.check(context)) {
+            Log.d("status: ", CheckNetworkConnection.check(context) + "");
             dialog.dismiss();
-        }else {
-            Log.d("status: ", CheckNetworkConnection.check(context)+"");
+        } else {
+            Log.d("status: ", CheckNetworkConnection.check(context) + "");
             dialog.show();
             retry.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(CheckNetworkConnection.check(context)){
+                    if (CheckNetworkConnection.check(context)) {
                         dialog.dismiss();
                     }
                 }
