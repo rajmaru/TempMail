@@ -1,16 +1,16 @@
 package com.one.tempmail.UI;
 
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.databinding.DataBindingUtil;
@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.material.button.MaterialButton;
 import com.one.tempmail.Adapter.InboxAdapter;
 import com.one.tempmail.Models.InboxData;
 import com.one.tempmail.R;
@@ -30,7 +31,6 @@ import com.one.tempmail.databinding.ActivityMainBinding;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
 
     ActivityMainBinding binding;
     InboxAdapter adapter;
@@ -57,6 +57,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 getInboxData(email);
+            }
+        });
+
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.no_internet_connection_dialog);
+        dialog.setCancelable(false);
+        dialog.show();
+        MaterialButton retry = dialog.findViewById(R.id.retryBtn);
+        retry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
             }
         });
 
