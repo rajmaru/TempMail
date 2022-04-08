@@ -27,6 +27,7 @@ import com.one.tempmail.CheckConnection.MyReceiver;
 import com.one.tempmail.Models.InboxData;
 import com.one.tempmail.R;
 import com.one.tempmail.ViewModel.ApiViewModel;
+import com.one.tempmail.ViewModelFactory.ApiViewModelFactory;
 import com.one.tempmail.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
@@ -36,12 +37,12 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     InboxAdapter adapter;
     ApiViewModel apiViewModel;
+    BroadcastReceiver myReceiver;
     SharedPreferences savedEmailPreferences;
     ArrayList<InboxData> inboxDataList;
     SharedPreferences.Editor editor;
     ShimmerFrameLayout shimmer;
     String email;
-    BroadcastReceiver myreceiver;
     public static final String LOADING = "Loading...";
 
     @Override
@@ -50,9 +51,7 @@ public class MainActivity extends AppCompatActivity {
         SplashScreen.installSplashScreen(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-
         initialize();
-        regBroadcastIntent();
         getSavedUserData();
         randomEmailButton();
         copyButton();
@@ -68,57 +67,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        regBroadcastIntent();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        regBroadcastIntent();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        regBroadcastIntent();
+        registerReceiver(myReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregBroadcastIntent();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregBroadcastIntent();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregBroadcastIntent();
+        Toast.makeText(this, "pause",Toast.LENGTH_LONG).show();
+        unregisterReceiver(myReceiver);
     }
 
     private void initialize() {
-        myreceiver = new MyReceiver();
-        apiViewModel = new ViewModelProvider(this).get(ApiViewModel.class);
+        myReceiver = new MyReceiver();
+        registerReceiver(myReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        apiViewModel = new ViewModelProvider(this,new ApiViewModelFactory(this)).get(ApiViewModel.class);
         savedEmailPreferences = getSharedPreferences("savedEmailPreferences", MODE_PRIVATE);
         editor = savedEmailPreferences.edit();
         inboxDataList = new ArrayList<>();
         shimmer = findViewById(R.id.inboxShimmer);
         shimmer.startShimmer();
-    }
-
-    private void regBroadcastIntent() {
-        registerReceiver(myreceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
-
-    private void unregBroadcastIntent() {
-        unregisterReceiver(myreceiver);
     }
 
     // Email

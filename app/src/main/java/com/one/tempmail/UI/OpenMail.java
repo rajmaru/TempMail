@@ -15,13 +15,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
-import com.one.tempmail.Adapter.AttachmentsAdapter;
 import com.one.tempmail.Adapter.AttachDecoration;
+import com.one.tempmail.Adapter.AttachmentsAdapter;
 import com.one.tempmail.CheckConnection.MyReceiver;
 import com.one.tempmail.Models.AttachmentsData;
 import com.one.tempmail.Models.MessageData;
 import com.one.tempmail.R;
 import com.one.tempmail.ViewModel.ApiViewModel;
+import com.one.tempmail.ViewModelFactory.ApiViewModelFactory;
 import com.one.tempmail.databinding.ActivityOpenMailBinding;
 
 import java.util.ArrayList;
@@ -31,9 +32,9 @@ public class OpenMail extends AppCompatActivity {
     ActivityOpenMailBinding binding;
     AttachmentsAdapter adapter;
     SharedPreferences savedEmailPreferences;
+    BroadcastReceiver myReceiver;
     ApiViewModel apiViewModel;
     ShimmerFrameLayout shimmer;
-    BroadcastReceiver myreceiver;
     int id;
     String email, username, domain, filename;
 
@@ -43,10 +44,21 @@ public class OpenMail extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_open_mail);
 
         initialize();
-       regBroadcastIntent();
         getSavedData();
         getMessageData(id, email);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(myReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(myReceiver);
     }
 
     private void getMessageData(Integer id, String email) {
@@ -76,57 +88,16 @@ public class OpenMail extends AppCompatActivity {
 
 
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        regBroadcastIntent();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        regBroadcastIntent();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        regBroadcastIntent();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregBroadcastIntent();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregBroadcastIntent();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregBroadcastIntent();
-    }
 
     private void initialize() {
-        myreceiver = new MyReceiver();
-        apiViewModel = new ViewModelProvider(this).get(ApiViewModel.class);
+        myReceiver = new MyReceiver();
+        registerReceiver(myReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        apiViewModel = new ViewModelProvider(this, new ApiViewModelFactory(this)).get(ApiViewModel.class);
         savedEmailPreferences = getSharedPreferences("savedEmailPreferences", MODE_PRIVATE);
         shimmer = (ShimmerFrameLayout) findViewById(R.id.openMailShimmer);
         shimmer.startShimmer();
     }
 
-    private void regBroadcastIntent() {
-        registerReceiver(myreceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
-
-    private void unregBroadcastIntent() {
-        unregisterReceiver(myreceiver);
-    }
 
     private void getSavedData() {
         id = getIntent().getIntExtra("id", 0);

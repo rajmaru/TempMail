@@ -1,5 +1,7 @@
 package com.one.tempmail.ViewModel;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -12,13 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApiViewModel extends ViewModel {
+    Context context;
     ApiRepository repository;
     LiveData<ArrayList<String>> getRandomEmail;
     LiveData<ArrayList<InboxData>> getInboxData;
     LiveData<MessageData> getMessageData;
 
-    public ApiViewModel(){
-        repository = new ApiRepository();
+    public ApiViewModel(Context context){
+        this.context = context;
+        repository = new ApiRepository(context);
     }
 
     public LiveData<ArrayList<String>> getRandomEmail(){
