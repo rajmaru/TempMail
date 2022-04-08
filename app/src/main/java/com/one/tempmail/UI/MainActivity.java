@@ -1,16 +1,16 @@
 package com.one.tempmail.UI;
 
-import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.databinding.DataBindingUtil;
@@ -21,8 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
-import com.google.android.material.button.MaterialButton;
 import com.one.tempmail.Adapter.InboxAdapter;
+import com.one.tempmail.CheckConnection.CheckNetworkConnection;
+import com.one.tempmail.CheckConnection.MyReceiver;
 import com.one.tempmail.Models.InboxData;
 import com.one.tempmail.R;
 import com.one.tempmail.ViewModel.ApiViewModel;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     ShimmerFrameLayout shimmer;
     String email;
+    BroadcastReceiver myreceiver;
     public static final String LOADING = "Loading...";
 
     @Override
@@ -48,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
         SplashScreen.installSplashScreen(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+
         initialize();
+        regBroadcastIntent();
         getSavedUserData();
         randomEmailButton();
         copyButton();
@@ -60,28 +64,61 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.no_internet_connection_dialog);
-        dialog.setCancelable(false);
-        dialog.show();
-        MaterialButton retry = dialog.findViewById(R.id.retryBtn);
-        retry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        regBroadcastIntent();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        regBroadcastIntent();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        regBroadcastIntent();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregBroadcastIntent();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregBroadcastIntent();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregBroadcastIntent();
+    }
 
     private void initialize() {
+        myreceiver = new MyReceiver();
         apiViewModel = new ViewModelProvider(this).get(ApiViewModel.class);
         savedEmailPreferences = getSharedPreferences("savedEmailPreferences", MODE_PRIVATE);
         editor = savedEmailPreferences.edit();
         inboxDataList = new ArrayList<>();
         shimmer = findViewById(R.id.inboxShimmer);
         shimmer.startShimmer();
+    }
+
+    private void regBroadcastIntent() {
+        registerReceiver(myreceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    private void unregBroadcastIntent() {
+        unregisterReceiver(myreceiver);
     }
 
     // Email
@@ -97,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
     private void setEmailTV(String email) {
         if (email != null) {
             binding.randomEmailTV.setText(email);
@@ -120,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
     private void setInboxAdapter() {
         if (!inboxDataList.isEmpty()) {
             // Stop Shimmer Effect
@@ -152,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Change Date Format
     private void changeDateFormat(ArrayList<InboxData> inboxDataList) {
-        for(int i=0; i<inboxDataList.size(); i++){
+        for (int i = 0; i < inboxDataList.size(); i++) {
             // Date and Time
             String[] dateAndTime, dateData, timeData, date, time;
             String year, day, month, hours, minutes, seconds, AMPM;
@@ -173,11 +212,11 @@ public class MainActivity extends AppCompatActivity {
             day = dateData[2];
 
             //Remove '0' from index[0]
-            if(month.indexOf('0')==0){
-                month = month.substring(1,month.length());
+            if (month.indexOf('0') == 0) {
+                month = month.substring(1, month.length());
             }
-            if(day.indexOf('0')==0){
-                day = day.substring(1,day.length());
+            if (day.indexOf('0') == 0) {
+                day = day.substring(1, day.length());
             }
 
             // Set Time Values
@@ -188,11 +227,11 @@ public class MainActivity extends AppCompatActivity {
             seconds = timeData[2];
 
             //Set 12 hours period
-            if(intHours <= 12){
+            if (intHours <= 12) {
                 AMPM = "am";
-            }else{
+            } else {
                 intHours = intHours - 12;
-                hours = intHours+"";
+                hours = intHours + "";
                 AMPM = "pm";
             }
 
@@ -250,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
             getRandomEmail();
         }
     }
+
     private void saveEmail(String email) {
         editor.putString("savedEmail", email);
         editor.commit();
@@ -264,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void copyButton() {
         binding.randomEmailCopyBtn.setOnClickListener(new View.OnClickListener() {
             @Override

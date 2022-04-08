@@ -1,7 +1,5 @@
 package com.one.tempmail.Repository;
 
-import android.os.Environment;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -11,16 +9,12 @@ import com.one.tempmail.Constants.Constants;
 import com.one.tempmail.Models.InboxData;
 import com.one.tempmail.Models.MessageData;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class ApiRepository {
 

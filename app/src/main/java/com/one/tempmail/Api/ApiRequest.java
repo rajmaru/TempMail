@@ -4,7 +4,6 @@ import com.one.tempmail.Models.InboxData;
 import com.one.tempmail.Models.MessageData;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;

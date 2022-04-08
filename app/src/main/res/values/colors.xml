@@ -18,4 +18,10 @@
 
     <color name="shimmercolor">#C2C2C2</color>
 
+    <color name="dialog_background_color">#008069</color>
+    <color name="dialog_BtnText_color">#008069</color>
+    <color name="dialog_BtnBackground_color">#F4F4F4</color>
+    <color name="dialog_BtnRipple_color">#657680</color>
+
+
 </resources>
