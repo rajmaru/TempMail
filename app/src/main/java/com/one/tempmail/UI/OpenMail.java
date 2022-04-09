@@ -3,9 +3,15 @@ package com.one.tempmail.UI;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.text.Html;
+import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -13,6 +19,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.webkit.WebSettingsCompat;
+import androidx.webkit.WebViewFeature;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.one.tempmail.Adapter.AttachDecoration;
@@ -50,16 +58,17 @@ public class OpenMail extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         registerReceiver(myReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         unregisterReceiver(myReceiver);
     }
+
 
     private void getMessageData(Integer id, String email) {
         String[] stringList = email.split("@");
@@ -80,18 +89,37 @@ public class OpenMail extends AppCompatActivity {
                 // Set Values
                 binding.senderEmailOM.setText(messageData.getFrom());
                 binding.subjectTV.setText(messageData.getSubject());
-                binding.mailBodyOM.setText(messageData.getTextBody());
+
+                // Set Values in Webview
+                String htmlBody;
+                String body = messageData.getHtmlBody();
+                if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                    switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                        case Configuration.UI_MODE_NIGHT_YES:
+                            htmlBody = "<font size=\"4\"; color=\"#D2D9DD\">" +body+ "</font>";
+                            binding.webview.setBackgroundColor(0);
+                            binding.webview.loadDataWithBaseURL(null, htmlBody, "text/html", "utf-8", null);
+                            WebSettingsCompat.setForceDark(binding.webview.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
+                            break;
+                        case Configuration.UI_MODE_NIGHT_NO:
+                        case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                            htmlBody = "<font size=\"4\"; color=\"#47555a\">" +body+ "</font>";
+                            binding.webview.setBackgroundColor(0);
+                            binding.webview.loadDataWithBaseURL(null, htmlBody, "text/html", "utf-8", null);
+                            WebSettingsCompat.setForceDark(binding.webview.getSettings(), WebSettingsCompat.FORCE_DARK_OFF);
+                            break;
+                    }
+                }
+
+                // Set data in adapter
                 setAttachmentsAdapter(messageData.getAttachments());
             }
         });
     }
 
 
-
-
     private void initialize() {
         myReceiver = new MyReceiver();
-        registerReceiver(myReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         apiViewModel = new ViewModelProvider(this, new ApiViewModelFactory(this)).get(ApiViewModel.class);
         savedEmailPreferences = getSharedPreferences("savedEmailPreferences", MODE_PRIVATE);
         shimmer = (ShimmerFrameLayout) findViewById(R.id.openMailShimmer);

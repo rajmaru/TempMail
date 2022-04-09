@@ -14,14 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApiViewModel extends ViewModel {
-    Context context;
     ApiRepository repository;
     LiveData<ArrayList<String>> getRandomEmail;
     LiveData<ArrayList<InboxData>> getInboxData;
     LiveData<MessageData> getMessageData;
 
     public ApiViewModel(Context context){
-        this.context = context;
         repository = new ApiRepository(context);
     }
 

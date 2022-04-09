@@ -1,6 +1,7 @@
 package com.one.tempmail.Adapter;
 
 import android.content.Intent;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;

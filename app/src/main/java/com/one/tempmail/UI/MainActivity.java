@@ -67,20 +67,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         registerReceiver(myReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         unregisterReceiver(myReceiver);
     }
 
     private void initialize() {
         myReceiver = new MyReceiver();
-        registerReceiver(myReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         apiViewModel = new ViewModelProvider(this,new ApiViewModelFactory(this)).get(ApiViewModel.class);
         savedEmailPreferences = getSharedPreferences("savedEmailPreferences", MODE_PRIVATE);
         editor = savedEmailPreferences.edit();
@@ -128,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setInboxAdapter() {
-        if (!inboxDataList.isEmpty()) {
+        if (inboxDataList != null && !inboxDataList.isEmpty()) {
             // Stop Shimmer Effect
             shimmer.stopShimmer();
             shimmer.setVisibility(View.GONE);
@@ -146,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
             binding.inboxRv.setAdapter(adapter);
             binding.inboxRv.setHasFixedSize(true);
             binding.inboxRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+
+            //Set Refreshing Off
             binding.refreshLayout.setRefreshing(false);
         } else {
             shimmer.stopShimmer();

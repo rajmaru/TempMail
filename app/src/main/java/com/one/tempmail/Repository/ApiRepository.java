@@ -45,6 +45,8 @@ public class ApiRepository {
                             data.setValue(null);
                         }
                     });
+        }else{
+            data.setValue(null);
         }
         return data;
     }
@@ -66,6 +68,8 @@ public class ApiRepository {
                             data.setValue(null);
                         }
                     });
+        }else{
+            data.setValue(null);
         }
         return data;
     }
@@ -87,6 +91,8 @@ public class ApiRepository {
                             data.setValue(null);
                         }
                     });
+        }else{
+            data.setValue(null);
         }
         return data;
     }
