@@ -81,8 +81,7 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
         holder.download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                activity.downloadAttachements();
-                Toast.makeText(activity,"Download successfully!!!",Toast.LENGTH_LONG).show();
+                activity.downloadAttachements(attachmentsData.getFilename());
             }
         });
 

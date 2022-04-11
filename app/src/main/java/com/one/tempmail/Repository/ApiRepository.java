@@ -1,6 +1,10 @@
 package com.one.tempmail.Repository;
 
+import android.app.DownloadManager;
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -36,17 +40,17 @@ public class ApiRepository {
                         @Override
                         public void onResponse(Call<ArrayList<String>> call, Response<ArrayList<String>> response) {
                             if (response.body() != null) {
-                                data.setValue(response.body());
+                                data.postValue(response.body());
                             }
                         }
 
                         @Override
                         public void onFailure(Call<ArrayList<String>> call, Throwable t) {
-                            data.setValue(null);
+                            data.postValue(null);
                         }
                     });
         }else{
-            data.setValue(null);
+            data.postValue(null);
         }
         return data;
     }
@@ -59,17 +63,17 @@ public class ApiRepository {
                         @Override
                         public void onResponse(Call<ArrayList<InboxData>> call, Response<ArrayList<InboxData>> response) {
                             if (response.body() != null) {
-                                data.setValue(response.body());
+                                data.postValue(response.body());
                             }
                         }
 
                         @Override
                         public void onFailure(Call<ArrayList<InboxData>> call, Throwable t) {
-                            data.setValue(null);
+                            data.postValue(null);
                         }
                     });
         }else{
-            data.setValue(null);
+            data.postValue(null);
         }
         return data;
     }
@@ -82,43 +86,43 @@ public class ApiRepository {
                         @Override
                         public void onResponse(Call<MessageData> call, Response<MessageData> response) {
                             if (response.body() != null) {
-                                data.setValue(response.body());
+                                data.postValue(response.body());
                             }
                         }
 
                         @Override
                         public void onFailure(Call<MessageData> call, Throwable t) {
-                            data.setValue(null);
+                            data.postValue(null);
                         }
                     });
         }else{
-            data.setValue(null);
+            data.postValue(null);
         }
         return data;
     }
 
     public void downloadAttachments(String username, String domain, Integer id, String filename) {
-        String url = "https://www.1secmail.com/api/v1/?action=download"
-                + "&login=" + username
-                + "&domain=" + domain
-                + "&id=" + id
-                + "&file=" + filename;
-
         if(CheckNetworkConnection.check(context)){
-            apiRequest.downloadAttachments(url).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    try {
+            if(username!=null && !username.isEmpty() || domain!=null && !domain.isEmpty() || id != null|| filename!=null && !filename.isEmpty()){
+                String url = "https://www.1secmail.com/api/v1/?action=download"
+                        + "&login=" + username
+                        + "&domain=" + domain
+                        + "&id=" + id
+                        + "&file=" + filename;
+                Log.d("TAG", "downloadAttachments: " + url);
 
-                    } catch (Exception ex) {
-                    }
+                if(CheckNetworkConnection.check(context)){
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url))
+                            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)// Visibility of the download Notification
+                            .setDestinationUri(Uri.fromFile(url))// Uri of the destination file
+                            .setTitle(filename)// Title of the Download Notification
+                            .setDescription("Downloading")// Description of the Download Notification
+                            .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
+                            .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
+                    Toast.makeText(context,"Downloading...",Toast.LENGTH_SHORT).show();
                 }
+            }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                }
-            });
         }
 
     }

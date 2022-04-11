@@ -9,7 +9,9 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -58,17 +60,16 @@ public class OpenMail extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         registerReceiver(myReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         unregisterReceiver(myReceiver);
     }
-
 
     private void getMessageData(Integer id, String email) {
         String[] stringList = email.split("@");
@@ -77,42 +78,48 @@ public class OpenMail extends AppCompatActivity {
         apiViewModel.getMessageData(username, domain, id).observe(this, new Observer<MessageData>() {
             @Override
             public void onChanged(MessageData messageData) {
-                // Stop Shimmer Effect
-                shimmer.stopShimmer();
-                shimmer.setVisibility(View.GONE);
+                if (messageData != null) {
+                    // Stop Shimmer Effect
+                    shimmer.stopShimmer();
+                    shimmer.setVisibility(View.GONE);
 
-                // Set Visibility Layout
-                binding.fromLayout.setVisibility(View.VISIBLE);
-                binding.subjectLayout.setVisibility(View.VISIBLE);
-                binding.mailBodyLayout.setVisibility(View.VISIBLE);
+                    // Set Visibility Layout
+                    binding.fromLayout.setVisibility(View.VISIBLE);
+                    binding.subjectLayout.setVisibility(View.VISIBLE);
+                    binding.mailBodyLayout.setVisibility(View.VISIBLE);
 
-                // Set Values
-                binding.senderEmailOM.setText(messageData.getFrom());
-                binding.subjectTV.setText(messageData.getSubject());
+                    // Set Values
+                    binding.senderEmailOM.setText(messageData.getFrom());
+                    binding.subjectTV.setText(messageData.getSubject());
 
-                // Set Values in Webview
-                String htmlBody;
-                String body = messageData.getHtmlBody();
-                if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-                    switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-                        case Configuration.UI_MODE_NIGHT_YES:
-                            htmlBody = "<font size=\"4\"; color=\"#D2D9DD\">" +body+ "</font>";
-                            binding.webview.setBackgroundColor(0);
-                            binding.webview.loadDataWithBaseURL(null, htmlBody, "text/html", "utf-8", null);
-                            WebSettingsCompat.setForceDark(binding.webview.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
-                            break;
-                        case Configuration.UI_MODE_NIGHT_NO:
-                        case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                            htmlBody = "<font size=\"4\"; color=\"#47555a\">" +body+ "</font>";
-                            binding.webview.setBackgroundColor(0);
-                            binding.webview.loadDataWithBaseURL(null, htmlBody, "text/html", "utf-8", null);
-                            WebSettingsCompat.setForceDark(binding.webview.getSettings(), WebSettingsCompat.FORCE_DARK_OFF);
-                            break;
+                    // Set Values in Webview
+                    String htmlBody;
+                    String body = messageData.getHtmlBody();
+                    if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                            case Configuration.UI_MODE_NIGHT_YES:
+                                htmlBody = "<font size=\"4\"; color=\"#D2D9DD\">" + body + "</font>";
+                                binding.webview.setBackgroundColor(0);
+                                binding.webview.setVerticalScrollBarEnabled(false);
+                                binding.webview.setHorizontalScrollBarEnabled(false);
+                                binding.webview.loadDataWithBaseURL(null, htmlBody, "text/html", "utf-8", null);
+                                WebSettingsCompat.setForceDark(binding.webview.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
+                                break;
+                            case Configuration.UI_MODE_NIGHT_NO:
+                            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                                htmlBody = "<font size=\"4\"; color=\"#47555a\">" + body + "</font>";
+                                binding.webview.setBackgroundColor(0);
+                                binding.webview.setVerticalScrollBarEnabled(false);
+                                binding.webview.setHorizontalScrollBarEnabled(false);
+                                binding.webview.loadDataWithBaseURL(null, htmlBody, "text/html", "utf-8", null);
+                                WebSettingsCompat.setForceDark(binding.webview.getSettings(), WebSettingsCompat.FORCE_DARK_OFF);
+                                break;
+                        }
                     }
-                }
 
-                // Set data in adapter
-                setAttachmentsAdapter(messageData.getAttachments());
+                    // Set data in adapter
+                    setAttachmentsAdapter(messageData.getAttachments());
+                }
             }
         });
     }
@@ -125,7 +132,6 @@ public class OpenMail extends AppCompatActivity {
         shimmer = (ShimmerFrameLayout) findViewById(R.id.openMailShimmer);
         shimmer.startShimmer();
     }
-
 
     private void getSavedData() {
         id = getIntent().getIntExtra("id", 0);
@@ -145,7 +151,7 @@ public class OpenMail extends AppCompatActivity {
         }
     }
 
-    public void downloadAttachements() {
+    public void downloadAttachements(String filename) {
         apiViewModel.downloadAttachments(username, domain, id, filename);
     }
 }

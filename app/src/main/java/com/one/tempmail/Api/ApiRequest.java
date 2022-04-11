@@ -23,7 +23,6 @@ public interface ApiRequest {
             @Query("domain") String domain
     );
 
-
     @GET("api/v1/")
     Call<MessageData> getMessageData(
             @Query("action") String action,
@@ -31,8 +30,5 @@ public interface ApiRequest {
             @Query("domain") String domain,
             @Query("id") Integer id
     );
-
-    @GET
-    Call<ResponseBody> downloadAttachments(@Url String fileUrl);
 
 }

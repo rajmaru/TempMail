@@ -62,6 +62,7 @@
 
             </com.google.android.material.appbar.AppBarLayout>
 
+
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/openMailShimmer"
                 android:layout_width="0dp"
@@ -70,7 +71,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+                app:layout_constraintTop_toBottomOf="@id/appBarLayout">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -94,7 +95,7 @@
                 app:cardCornerRadius="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+                app:layout_constraintTop_toBottomOf="@id/appBarLayout">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -227,8 +228,9 @@
 
                     <WebView
                         android:id="@+id/webview"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
                         android:clipToPadding="false"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

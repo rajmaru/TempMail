@@ -67,14 +67,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         registerReceiver(myReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         unregisterReceiver(myReceiver);
     }
 
@@ -86,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
         inboxDataList = new ArrayList<>();
         shimmer = findViewById(R.id.inboxShimmer);
         shimmer.startShimmer();
+    }
+
+    public static void checkInternetConnection(){
+
     }
 
     // Email
