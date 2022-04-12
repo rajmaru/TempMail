@@ -1,12 +1,17 @@
 package com.one.tempmail.UI;
 
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -28,6 +33,7 @@ import androidx.webkit.WebViewFeature;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.one.tempmail.Adapter.AttachDecoration;
 import com.one.tempmail.Adapter.AttachmentsAdapter;
+import com.one.tempmail.BuildConfig;
 import com.one.tempmail.CheckConnection.MyReceiver;
 import com.one.tempmail.Models.AttachmentsData;
 import com.one.tempmail.Models.MessageData;
@@ -57,6 +63,13 @@ public class OpenMail extends AppCompatActivity {
         initialize();
         getSavedData();
         getMessageData(id, email);
+
+        binding.backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
     }
 
@@ -157,5 +170,13 @@ public class OpenMail extends AppCompatActivity {
 
     public void downloadAttachements(String filename) {
         apiViewModel.downloadAttachments(username, domain, id, filename);
+    }
+
+    public void requestPermission() {
+        // storage runtime permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
+            Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+            startActivity(new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri));
+        }
     }
 }

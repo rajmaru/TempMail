@@ -18,15 +18,15 @@ public class AttachDecoration extends RecyclerView.ItemDecoration {
         super.getItemOffsets(outRect, view, parent, state);
 
         if(parent.getChildLayoutPosition(view) == 0){
-            outRect.left = 40;
+            outRect.left = 26;
         }else{
-            outRect.left = 24;
+            outRect.left = 26;
         }
 
         if(parent.getChildLayoutPosition(view) == last-1){
-            outRect.right = 40;
+            outRect.right = 26;
         }
         outRect.bottom = 40;
-        outRect.top = 16;
+        outRect.top = 22;
     }
 }

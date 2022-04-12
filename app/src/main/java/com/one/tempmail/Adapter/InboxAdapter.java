@@ -40,7 +40,11 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.InboxViewHol
     public void onBindViewHolder(@NonNull InboxViewHolder holder, int position) {
         InboxData inboxData = inboxDataList.get(position);
         holder.title.setText(inboxData.getFrom());
-        holder.subject.setText(inboxData.getSubject());
+        if(!inboxData.getSubject().equals("")){
+            holder.subject.setText(inboxData.getSubject());
+        }else{
+            holder.subject.setText("...");
+        }
         holder.date.setText(inboxData.getDate());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

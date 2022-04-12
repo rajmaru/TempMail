@@ -1,21 +1,23 @@
 package com.one.tempmail.Adapter;
 
-import android.util.Log;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.one.tempmail.Constants.Constants;
+import com.one.tempmail.BuildConfig;
 import com.one.tempmail.Models.AttachmentsData;
 import com.one.tempmail.R;
 import com.one.tempmail.UI.OpenMail;
-import com.one.tempmail.ViewModel.ApiViewModel;
 
 import java.util.ArrayList;
 
@@ -81,10 +83,9 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
         holder.download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                activity.downloadAttachements(attachmentsData.getFilename());
+                    activity.downloadAttachements(attachmentsData.getFilename());
             }
         });
-
     }
 
     @Override
