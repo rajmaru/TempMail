@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewFeature;
 
@@ -46,7 +47,7 @@ public class OpenMail extends AppCompatActivity {
     ApiViewModel apiViewModel;
     ShimmerFrameLayout shimmer;
     int id;
-    String email, username, domain, filename;
+    String email, username, domain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,14 +80,6 @@ public class OpenMail extends AppCompatActivity {
             @Override
             public void onChanged(MessageData messageData) {
                 if (messageData != null) {
-                    // Stop Shimmer Effect
-                    shimmer.stopShimmer();
-                    shimmer.setVisibility(View.GONE);
-
-                    // Set Visibility Layout
-                    binding.fromLayout.setVisibility(View.VISIBLE);
-                    binding.subjectLayout.setVisibility(View.VISIBLE);
-                    binding.mailBodyLayout.setVisibility(View.VISIBLE);
 
                     // Set Values
                     binding.senderEmailOM.setText(messageData.getFrom());
@@ -99,26 +92,37 @@ public class OpenMail extends AppCompatActivity {
                         switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
                             case Configuration.UI_MODE_NIGHT_YES:
                                 htmlBody = "<font size=\"4\"; color=\"#D2D9DD\">" + body + "</font>";
+                                htmlBody = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />" + htmlBody;
                                 binding.webview.setBackgroundColor(0);
                                 binding.webview.setVerticalScrollBarEnabled(false);
                                 binding.webview.setHorizontalScrollBarEnabled(false);
-                                binding.webview.loadDataWithBaseURL(null, htmlBody, "text/html", "utf-8", null);
+                                binding.webview.loadDataWithBaseURL("file:///android_asset/style.css", htmlBody, "text/html", "utf-8", null);
                                 WebSettingsCompat.setForceDark(binding.webview.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
                                 break;
                             case Configuration.UI_MODE_NIGHT_NO:
                             case Configuration.UI_MODE_NIGHT_UNDEFINED:
                                 htmlBody = "<font size=\"4\"; color=\"#47555a\">" + body + "</font>";
+                                htmlBody = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />" + htmlBody;
                                 binding.webview.setBackgroundColor(0);
                                 binding.webview.setVerticalScrollBarEnabled(false);
                                 binding.webview.setHorizontalScrollBarEnabled(false);
-                                binding.webview.loadDataWithBaseURL(null, htmlBody, "text/html", "utf-8", null);
+                                binding.webview.loadDataWithBaseURL("file:///android_asset/style_night.css", htmlBody, "text/html", "utf-8", null);
                                 WebSettingsCompat.setForceDark(binding.webview.getSettings(), WebSettingsCompat.FORCE_DARK_OFF);
                                 break;
                         }
-                    }
 
-                    // Set data in adapter
-                    setAttachmentsAdapter(messageData.getAttachments());
+                        // Stop Shimmer Effect
+                        shimmer.stopShimmer();
+                        shimmer.setVisibility(View.GONE);
+
+                        // Set Visibility Layout
+                        binding.fromLayout.setVisibility(View.VISIBLE);
+                        binding.subjectLayout.setVisibility(View.VISIBLE);
+                        binding.mailBodyLayout.setVisibility(View.VISIBLE);
+
+                        // Set data in adapter
+                        setAttachmentsAdapter(messageData.getAttachments());
+                    }
                 }
             }
         });

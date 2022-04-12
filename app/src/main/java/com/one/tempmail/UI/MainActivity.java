@@ -1,12 +1,15 @@
 package com.one.tempmail.UI;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -34,6 +37,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CODE = 100;
     ActivityMainBinding binding;
     InboxAdapter adapter;
     ApiViewModel apiViewModel;
@@ -51,12 +55,13 @@ public class MainActivity extends AppCompatActivity {
         SplashScreen.installSplashScreen(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+        requestPermission();
         initialize();
         getSavedUserData();
         randomEmailButton();
         copyButton();
 
-        binding.refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        binding.inboxRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 getInboxData(email);
@@ -64,6 +69,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void requestPermission() {
+        // storage runtime permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+            }
+        }
     }
 
     @Override
@@ -151,14 +165,14 @@ public class MainActivity extends AppCompatActivity {
             binding.inboxRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
             //Set Refreshing Off
-            binding.refreshLayout.setRefreshing(false);
+            binding.inboxRefresh.setRefreshing(false);
         } else {
             shimmer.stopShimmer();
             shimmer.setVisibility(View.GONE);
             binding.inboxRv.setVisibility(View.GONE);
             binding.noDataImage.setVisibility(View.VISIBLE);
             binding.noDataText.setVisibility(View.VISIBLE);
-            binding.refreshLayout.setRefreshing(false);
+            binding.inboxRefresh.setRefreshing(false);
         }
     }
 

@@ -3,8 +3,8 @@ package com.one.tempmail.Repository;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -18,7 +18,6 @@ import com.one.tempmail.Models.MessageData;
 
 import java.util.ArrayList;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -111,20 +110,23 @@ public class ApiRepository {
                         + "&file=" + filename;
                 Log.d("TAG", "downloadAttachments: " + url);
 
-                if(CheckNetworkConnection.check(context)){
-                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url))
-                            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)// Visibility of the download Notification
-                            .setDestinationUri(Uri.fromFile(url))// Uri of the destination file
-                            .setTitle(filename)// Title of the Download Notification
-                            .setDescription("Downloading")// Description of the Download Notification
-                            .setAllowedOverMetered(true)// Set if download is allowed on Mobile network
-                            .setAllowedOverRoaming(true);// Set if download is allowed on roaming network
-                    Toast.makeText(context,"Downloading...",Toast.LENGTH_SHORT).show();
-                }
+                downloadImage(url, filename);
+
             }
 
         }
 
+    }
+
+    public void downloadImage(String url, String imageName) {
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setTitle(imageName);
+        request.setDescription("Downloading...");
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.allowScanningByMediaScanner();
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, imageName);
+        DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
     }
 
 }
