@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.ParseException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,7 +31,15 @@ import com.one.tempmail.ViewModel.ApiViewModel;
 import com.one.tempmail.ViewModelFactory.ApiViewModelFactory;
 import com.one.tempmail.databinding.ActivityMainBinding;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initialize() {
         myReceiver = new MyReceiver();
-        apiViewModel = new ViewModelProvider(this,new ApiViewModelFactory(this)).get(ApiViewModel.class);
+        apiViewModel = new ViewModelProvider(this, new ApiViewModelFactory(this)).get(ApiViewModel.class);
         savedEmailPreferences = getSharedPreferences("savedEmailPreferences", MODE_PRIVATE);
         editor = savedEmailPreferences.edit();
         inboxDataList = new ArrayList<>();
@@ -161,90 +170,21 @@ public class MainActivity extends AppCompatActivity {
     // Change Date Format
     private void changeDateFormat(ArrayList<InboxData> inboxDataList) {
         for (int i = 0; i < inboxDataList.size(); i++) {
-            // Date and Time
-            String[] dateAndTime, dateData, timeData, date, time;
-            String year, day, month, hours, minutes, seconds, AMPM;
-            int intHours, intMinutes;
+            String sDate = inboxDataList.get(i).getDate();
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.ENGLISH);
+                sdf.setTimeZone(TimeZone.getTimeZone("Europe/Amsterdam"));
+                Date mDate = null;
+                mDate = sdf.parse(sDate);
 
-            // Split Date and Time
-            dateAndTime = inboxDataList.get(i).getDate().split(" ");
-
-            // Split Date
-            dateData = dateAndTime[0].split("-");
-
-            // Split Time
-            timeData = dateAndTime[1].split(":");
-
-            // Set Date Values
-            year = dateData[0];
-            month = dateData[1];
-            day = dateData[2];
-
-            //Remove '0' from index[0]
-            if (month.indexOf('0') == 0) {
-                month = month.substring(1, month.length());
+                SimpleDateFormat sdfOutPutToSend = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.ENGLISH);
+                sdfOutPutToSend.setTimeZone(TimeZone.getDefault());
+                sDate = sdfOutPutToSend.format(mDate);
+            } catch (ParseException | java.text.ParseException e) {
+                e.printStackTrace();
             }
-            if (day.indexOf('0') == 0) {
-                day = day.substring(1, day.length());
-            }
-
-            // Set Time Values
-            hours = timeData[0];
-            intHours = Integer.parseInt(hours) + 4;
-            minutes = timeData[1];
-            intMinutes = Integer.parseInt(minutes) - 30;
-            seconds = timeData[2];
-
-            //Set 12 hours period
-            if (intHours <= 12) {
-                AMPM = "am";
-            } else {
-                intHours = intHours - 12;
-                hours = intHours + "";
-                AMPM = "pm";
-            }
-
-            // Convert months from number to name
-            switch (month) {
-                case "1":
-                    month = "Jan";
-                    break;
-                case "2":
-                    month = "Feb";
-                    break;
-                case "3":
-                    month = "Mar";
-                    break;
-                case "4":
-                    month = "Apr";
-                    break;
-                case "5":
-                    month = "May";
-                    break;
-                case "6":
-                    month = "Jun";
-                    break;
-                case "7":
-                    month = "Jul";
-                    break;
-                case "8":
-                    month = "Aug";
-                    break;
-                case "9":
-                    month = "Sept";
-                    break;
-                case "10":
-                    month = "Oct";
-                    break;
-                case "11":
-                    month = "Nov";
-                    break;
-                case "12":
-                    month = "Dec";
-                    break;
-            }
-            String finalTime = day + " " + month + ", " + year + " | " + hours + ":" + minutes + " " + AMPM;
-            inboxDataList.get(i).setDate(finalTime);
+            sDate = sDate.replace("AM", "am").replace("PM", "pm");
+            inboxDataList.get(i).setDate(sDate);
         }
     }
 
